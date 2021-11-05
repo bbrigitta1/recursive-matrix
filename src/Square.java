@@ -15,19 +15,19 @@ public class Square {
     this.pressed = pressed;
   }
 
-  public int getX() {
-    return x;
-  }
-
-  public void setX(int x) {
-    this.x = x;
-  }
-
   public int getValue() {
     return value;
   }
 
+  public List<Square> getNeighBours() {
+    return neighBours;
+  }
+
   public void setNeighBours(List<Square> neighBours) {
     this.neighBours = neighBours;
+  }
+
+  public void setValue(int value) {
+    this.value = value;
   }
 }

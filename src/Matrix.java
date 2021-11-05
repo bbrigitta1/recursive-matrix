@@ -6,12 +6,14 @@ import java.util.Random;
 public class Matrix {
   private Square[][] matrix;
   private int size;
+  private Util util;
 
   public Matrix(int size) {
     this.size = size;
     this.matrix = new Square[size][size];
     createRandomMatrix(size);
     setSquareNeighbours();
+    util = new Util();
   }
 
   public Matrix() {
@@ -21,11 +23,18 @@ public class Matrix {
     setSquareNeighbours();
   }
 
+  public int getSize() {
+    return size;
+  }
+
+  public Square[][] getMatrix() {
+    return matrix;
+  }
+
   private void createRandomMatrix(int size) {
     for (int i = 0; i < size; i++) {
       for (int j = 0; j < size; j++) {
-        Random rd = new Random();
-        int randomValue = rd.nextInt(2);
+        int randomValue = util.randomIntWithUpperBound(2);
         Square square = new Square(i, j, randomValue, false);
         matrix[i][j] = square;
       }
@@ -66,6 +75,26 @@ public class Matrix {
       }
       System.out.println();
     }
+    System.out.println();
   }
+
+  public void switchFunction(Square squareSelected) {
+    switcher(squareSelected);
+    for (Square neighbour : squareSelected.getNeighBours()) {
+      switcher(neighbour);
+    }
+
+  }
+
+  private void switcher(Square squareToSwitch) {
+    int actSquareValue = squareToSwitch.getValue();
+    if (actSquareValue == 1) {
+      squareToSwitch.setValue(0);
+    } else if (actSquareValue == 0) {
+      squareToSwitch.setValue(1);
+    }
+  }
+
+
 
 }
