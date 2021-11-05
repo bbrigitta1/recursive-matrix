@@ -22,4 +22,12 @@ public class Square {
   public void setX(int x) {
     this.x = x;
   }
+
+  public int getValue() {
+    return value;
+  }
+
+  public void setNeighBours(List<Square> neighBours) {
+    this.neighBours = neighBours;
+  }
 }
