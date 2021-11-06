@@ -1,12 +1,11 @@
-import javax.print.attribute.standard.DateTimeAtCreation;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class Main {
   public static void main(String[] args) {
+    List<Square> stepsTaken = new ArrayList<>();
+    SolutionsCheckedReport report = new SolutionsCheckedReport();
+    report.start();
+
     // 1. create matrix, point squares and print the matrix
     Util util = new Util();
     Matrix matrix = new Matrix();
@@ -19,10 +18,14 @@ public class Main {
     time.printStartDate();
 
     // 3. steps, for now it is random
-    List<Square> stepsTaken = new ArrayList<>();
+
     boolean allDown = matrix.checkIfAllDown();
 
     while(!allDown){
+      if (matrix.checkIfAllDown()) {
+        allDown = true;
+        report.setRunReport(false);
+      }
       Scanner scanner = new Scanner(System.in);
       String input = scanner.nextLine();
 
