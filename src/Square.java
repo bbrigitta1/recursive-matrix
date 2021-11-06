@@ -25,6 +25,14 @@ public class Square {
     return neighBours;
   }
 
+  public int getX() {
+    return x;
+  }
+
+  public int getY() {
+    return y;
+  }
+
   public boolean isPressed() {
     return pressed;
   }

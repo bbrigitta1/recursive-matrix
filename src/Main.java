@@ -4,6 +4,7 @@ public class Main {
   public static void main(String[] args) {
     List<Square> stepsTaken = new ArrayList<>();
     SolutionsCheckedReport report = new SolutionsCheckedReport();
+    report.setStepsTaken(stepsTaken);
     report.start();
 
     // 1. create matrix, point squares and print the matrix
