@@ -95,6 +95,45 @@ public class Matrix {
     }
   }
 
+  public boolean checkIfAllDown() {
+    for (int i=0; i<size; i++) {
+      for (int j=0; j<matrix[i].length; j++) {
+        Square actual = matrix[i][j];
+        if (actual.getValue() == 1) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
 
+  private void pointingSquares(Square squareToPoint){
+    int points = 0;
+    int act = squareToPoint.getValue();
+    if (act == 1) {
+      points += 1;
+    } else {
+      points -= 1;
+    }
+    for (Square neighbour : squareToPoint.getNeighBours()) {
+      int a = neighbour.getValue();
+      if (a == 1) {
+        points += 1;
+      } else {
+        points -= 1;
+      }
+    }
+    squareToPoint.setPoints(points);
+
+  }
+
+  public void pointing() {
+    for (int i=0; i<size; i++) {
+      for (int j=0; j<matrix[i].length; j++) {
+        Square actual = matrix[i][j];
+        pointingSquares(actual);
+      }
+    }
+  }
 
 }

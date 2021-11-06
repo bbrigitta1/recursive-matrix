@@ -2,17 +2,16 @@ import javax.print.attribute.standard.DateTimeAtCreation;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
   public static void main(String[] args) {
-    // 1. print the matrix
+    // 1. create matrix, point squares and print the matrix
     Util util = new Util();
     Matrix matrix = new Matrix();
+
+    matrix.pointing();
     matrix.printMatrix();
 
     // 2.print actual time
@@ -21,33 +20,27 @@ public class Main {
 
     // 3. steps, for now it is random
     List<Square> stepsTaken = new ArrayList<>();
-    boolean run = true;
-    while(run){
+    boolean allDown = matrix.checkIfAllDown();
 
-      int size = matrix.getSize();
-      int randomX = util.randomIntWithUpperBound(size);
-      int randomY = util.randomIntWithUpperBound(size);
+    while(!allDown){
+      Scanner scanner = new Scanner(System.in);
+      String input = scanner.nextLine();
 
-      Square selectedSquare = matrix.getMatrix()[randomX][randomY];
+      if (input.isEmpty()) {
 
-      stepsTaken.add(selectedSquare);
-      matrix.switchFunction(selectedSquare);
-      matrix.printMatrix();
+        int size = matrix.getSize();
+        int randomX = util.randomIntWithUpperBound(size);
+        int randomY = util.randomIntWithUpperBound(size);
 
-      long secondsPassed = time.calculateSeconds();
-      System.out.println("passed ms: " + secondsPassed);
-      long remainder = secondsPassed % 10;
-      System.out.println("remainder: " + remainder);
+        Square selectedSquare = matrix.getMatrix()[randomX][randomY];
 
-      if (remainder == 0.0) {
-        System.out.println("taken steps: " + stepsTaken.size());
-      }
-
-      //create a point to step out
-      if (stepsTaken.size() == 100000) {
-        run = false;
+        if (!selectedSquare.isPressed()) {
+          matrix.switchFunction(selectedSquare);
+          selectedSquare.setPressed(true);
+          stepsTaken.add(selectedSquare);
+        }
+        matrix.printMatrix();
       }
     }
-
   }
 }
