@@ -1,3 +1,4 @@
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -134,6 +135,40 @@ public class Matrix {
         pointingSquares(actual);
       }
     }
+  }
+
+  public BigInteger factorial(int n) {
+    BigInteger result = BigInteger.ONE;
+    for (int i=0; i<n; i++) {
+      result = result.multiply(BigInteger.valueOf(i+1));
+    }
+    return result;
+  }
+
+  public BigInteger variationsWithoutRepetition(int n, int k) {
+    return factorial(n).divide(factorial(k).multiply(factorial(n-k)));
+  }
+
+  public Square searchOneDownwards() {
+    for (int i=0; i<size; i++) {
+      for (int j=0; j< matrix[i].length; j++) {
+        Square actual = matrix[i][j];
+        int actualValue = actual.getValue();
+        if (actualValue == 1 && i<5) {
+          Square downSquare = matrix[i + 1][j];
+          return downSquare;
+        } else if (i == 5) {
+          return null;
+        }
+      }
+    }
+    return null;
+  }
+
+  public Square selectRandomSquare() {
+    int randomX = util.randomIntWithUpperBound(size);
+    int randomY = util.randomIntWithUpperBound(size);
+    return matrix[randomX][randomY];
   }
 
 }
