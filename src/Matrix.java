@@ -1,17 +1,18 @@
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Matrix {
   private Square[][] matrix;
   private int size;
+  private int matrixSize;
   private Util util;
+
 
   public Matrix(int size) {
     this.size = size;
+    this.matrixSize = size * size;
     this.matrix = new Square[size][size];
+    util = new Util();
     createRandomMatrix(size);
     setSquareNeighbours();
     util = new Util();
@@ -19,17 +20,10 @@ public class Matrix {
 
   public Matrix() {
     this.size = 6;
+    this.matrixSize = size * size;
     this.matrix = new Square[6][6];
     createFixMatrix();
     setSquareNeighbours();
-  }
-
-  public int getSize() {
-    return size;
-  }
-
-  public Square[][] getMatrix() {
-    return matrix;
   }
 
   private void createRandomMatrix(int size) {
@@ -60,7 +54,7 @@ public class Matrix {
         List<Direction> directions = Arrays.asList(Direction.values());
         List<Square> neighbours = new ArrayList<>();
         for (Direction dir : directions) {
-          if ((i + dir.x > -1 && i + dir.x < 6) && (j + dir.y > -1 && j + dir.y < 6)) {
+          if ((i + dir.x > -1 && i + dir.x < size) && (j + dir.y > -1 && j + dir.y < size)) {
             neighbours.add(matrix[i + dir.x][j + dir.y]);
           }
         }
@@ -137,6 +131,11 @@ public class Matrix {
     }
   }
 
+  public Square selectRandomSquare() {
+    int randomX = util.randomIntWithUpperBound(size);
+    int randomY = util.randomIntWithUpperBound(size);
+    return matrix[randomX][randomY];
+  }
   public BigInteger factorial(int n) {
     BigInteger result = BigInteger.ONE;
     for (int i=0; i<n; i++) {
@@ -157,7 +156,8 @@ public class Matrix {
         if (actualValue == 1 && i<5) {
           Square downSquare = matrix[i + 1][j];
           return downSquare;
-        } else if (i == 5) {
+        } else if (i == 5 && !checkIfAllDown()) {
+          setRowToIdealPosition(i);
           return null;
         }
       }
@@ -165,10 +165,106 @@ public class Matrix {
     return null;
   }
 
-  public Square selectRandomSquare() {
-    int randomX = util.randomIntWithUpperBound(size);
-    int randomY = util.randomIntWithUpperBound(size);
-    return matrix[randomX][randomY];
+  public Square searchOneUpwards() {
+    for (int i=size-1; i<size; i--) {
+      for (int j=0; j< matrix[i].length; j++) {
+        Square actual = matrix[i][j];
+        int actualValue = actual.getValue();
+        if (actualValue == 1 && i > 0) {
+          Square upSquare = matrix[i - 1][j];
+          return upSquare;
+          //if last row and not AllSwitchedDown
+        } else if (i == 0 && !checkIfAllDown()) {
+          setRowToIdealPosition(i);
+          return null;
+        }
+      }
+    }
+    return null;
   }
+
+  public void setRowToIdealPosition(int rowIndex) {
+    Square[] rowToSet = matrix[rowIndex];
+    for (int i=0; i<rowToSet.length; i++) {
+      //prevent indexError
+      if (i != rowToSet.length-1) {
+        int actualValue = rowToSet[i].getValue();
+        //pattern to achieve: 1 0 1 0 1 0
+        if ((i + 1) % 2 != 0) {
+          if (actualValue == 0) {
+            Square squareToSwitch = matrix[rowIndex][i + 1];
+            switchFunction(squareToSwitch);
+          }
+        } else {
+          if (actualValue == 1) {
+            Square squareToSwitch = matrix[rowIndex][i + 1];
+            switchFunction(squareToSwitch);
+          }
+        }
+      }
+    }
+  }
+
+  public List<Square> makeMatrixAsList() {
+    Square[][] matrixCopy = matrix.clone();
+    List<Square> matrixAsList = new ArrayList<>();
+
+    for (int i=0; i<size; i++) {
+      for (int j = 0; j < matrix[i].length; j++) {
+        Square square = matrixCopy[i][j];
+        matrixAsList.add(square);
+      }
+    }
+    return matrixAsList;
+  }
+
+  public List<Square[]> combinationsWithoutRepetitions(List<Square[]> combinations) {
+    List<Square> matrixAsList = makeMatrixAsList();
+    for (int i=1; i<matrixSize+1; i++) {
+      addCombination(matrixAsList, combinations, i, new Square[i], 0, matrixSize-1, 0);
+    }
+    return combinations;
+  }
+
+
+  public void addCombination(List<Square> matrix, List<Square[]> combinations, int i, Square[] combinationCollector, int start, int end, int index) {
+    if (index == combinationCollector.length) {
+      Square[] combination = combinationCollector.clone();
+      combinations.add(combination);
+
+      for (int j=0; j<combination.length; j++) {
+        Square squareToSwitch = combination[j];
+        switchFunction(squareToSwitch);
+        util.scanner.nextLine();
+        printMatrix();
+      }
+
+      if (checkIfAllDown()) {
+        printMatrix();
+
+        for (int j=0; j<combination.length; j++) {
+          System.out.print("(" + combination[j].getX() + ", " + combination[j].getY() + ")");
+        }
+        System.out.println();
+      } else {
+
+        //switch back, if not ok
+        for (int j=0; j<combination.length; j++) {
+          Square squareToSwitch = combination[j];
+          switchFunction(squareToSwitch);
+        }
+        System.out.println("Wrong solution!");
+        printMatrix();
+      }
+    } else {
+      int max = Math.min(end, end + 1 - combinationCollector.length + index);
+      for (int k = start; k <= max; k++) {
+        combinationCollector[index] = matrix.get(k);
+        addCombination(matrix, combinations, i, combinationCollector, k + 1, end, index + 1);
+      }
+    }
+  }
+
+
 
 }
